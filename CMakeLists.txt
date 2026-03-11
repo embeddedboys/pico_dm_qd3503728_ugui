@@ -31,7 +31,7 @@ include(pico_sdk_import.cmake)
 include(pico_extras_import_optional.cmake)
 
 # set the project name
-project(pico_dm_qd3503728 C CXX ASM)
+project(pico_dm_qd3503728_ugui C CXX ASM)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
@@ -46,7 +46,7 @@ endif()
 
 # If you want debug output from USB (pass -DPICO_STDIO_USB=1) this ensures you don't lose any debug output while USB is set up
 if (NOT DEFINED PICO_STDIO_USB_CONNECT_WAIT_TIMEOUT_MS)
-    set(PICO_STDIO_USB_CONNECT_WAIT_TIMEOUT_MS 3000)
+    set(PICO_STDIO_USB_CONNECT_WAIT_TIMEOUT_MS 1000)
 endif()
 
 # initialize the Raspberry Pi Pico SDK
@@ -98,16 +98,20 @@ if(OVERCLOCK_ENABLED)
     elseif(${PICO_BOARD} STREQUAL "pico2" OR ${PICO_PLATFORM} STREQUAL "rp2350")
         # Overclocking profiles
         #      SYS_CLK  | FLASH_CLK | Voltage
-        #  1  | 366MHz  |  122MHz   |  1.20(V)
-        #  1  | 384MHz  |  128MHz   |  1.20(V)
+        #  1  | 225MHz  |   75MHz   |  1.10(V) (default, stable, recommended for most devices)
+        #  2  | 366MHz  |  122MHz   |  1.20(V)
+        #  3  | 384MHz  |  128MHz   |  1.20(V)
         set(OVERCLOCK_PROFILE 1)
 
         if(OVERCLOCK_PROFILE EQUAL 1)
-            set(SYS_CLK_KHZ 366000)             # CPU clock speed
+            set(SYS_CLK_KHZ 225000)             # CPU clock speed
             set(PERI_CLK_KHZ ${SYS_CLK_KHZ})    # Peripheral clock speed
         elseif(OVERCLOCK_PROFILE EQUAL 2)
-            set(SYS_CLK_KHZ 384000)             # CPU clock speed
-            set(PERI_CLK_KHZ ${SYS_CLK_KHZ})    # Peripheral clock speed
+            set(SYS_CLK_KHZ 366000)
+            set(PERI_CLK_KHZ ${SYS_CLK_KHZ})
+        elseif(OVERCLOCK_PROFILE EQUAL 3)
+            set(SYS_CLK_KHZ 384000)
+            set(PERI_CLK_KHZ ${SYS_CLK_KHZ})
         else()
             message(FATAL_ERROR "Invalid overclocking profile")
         endif()
@@ -139,7 +143,7 @@ set(LCD_VER_RES 320)
 set(DISP_OVER_PIO 1) # 1: PIO, 0: GPIO
 set(PIO_USE_DMA   1)   # 1: use DMA, 0: not use DMA
 if(OVERCLOCK_ENABLED)
-    set(I80_BUS_WR_CLK_KHZ 58000)
+    set(I80_BUS_WR_CLK_KHZ 55000)
 else()
     set(I80_BUS_WR_CLK_KHZ 50000)
 endif()
@@ -180,6 +184,7 @@ file(GLOB_RECURSE COMMON_SOURCES
     ft6236.c
     i2c_tools.c
     backlight.c
+    ugui/ugui.c
 )
 
 # rest of your project
@@ -239,7 +244,7 @@ message(WARNING "
 target_compile_definitions(bs2_default PRIVATE PICO_FLASH_SPI_CLKDIV=${PICO_FLASH_SPI_CLKDIV})
 target_compile_definitions(${PROJECT_NAME} PRIVATE FLASH_CLK_KHZ=${FLASH_CLK_KHZ})
 
-pico_enable_stdio_usb(${PROJECT_NAME} 0)    # 0: disable, 1: enable
+pico_enable_stdio_usb(${PROJECT_NAME} 1)    # 0: disable, 1: enable
 pico_enable_stdio_uart(${PROJECT_NAME} 1)   # 0: disable, 1: enable
 
 pico_add_extra_outputs(${PROJECT_NAME}) # uf2 and more files
