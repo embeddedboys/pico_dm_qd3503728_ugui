@@ -44,6 +44,11 @@ enum {
 /* Bit 0,1 is reserved */
 
 extern int ili9488_driver_init();
+
+extern void ili9488_write_cmd(uint16_t cmd);
+extern void ili9488_write_data(uint16_t data);
+extern void ili9488_set_window(int xs, int ys, int xe, int ye);
+
 extern void ili9488_fill(uint16_t color);
 extern void ili9488_video_flush(int xs, int ys, int xe, int ye, void *vmem16,
 				uint32_t len);
