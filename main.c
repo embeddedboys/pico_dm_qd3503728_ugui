@@ -178,29 +178,11 @@ struct ugui_test {
 	void (*func)(bool loop);
 	bool hold;
 };
-#define DEFINE_UGUI_TEST(i, n, f, h) \
-	{ .idx = i, .name = n, .func = f, .hold = h }
-#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(arr[0])))
-
-static void ugui_test_color_fill(bool loop)
-{
-	uint16_t color[] = { C_RED,  C_ORANGE, C_YELLOW, C_GREEN,
-			     C_BLUE, C_INDIGO, C_VIOLET };
-
-	for (int i = 0; i < ARRAY_SIZE(color); i++) {
-		UG_FillScreen(color[i]);
-		sleep_ms(100);
+#define DEFINE_UGUI_TEST(i, n, f, h)                      \
+	{                                                 \
+		.idx = i, .name = n, .func = f, .hold = h \
 	}
-}
-
-static void ugui_test_draw(bool loop)
-{
-	UG_FillScreen(C_BLACK);
-	UG_SetForecolor(C_WHITE);
-	UG_DrawLine(0, 0, 239, 239, C_RED);
-	UG_DrawFrame(10, 10, 100, 100, C_RED);
-	UG_FillFrame(120, 10, 200, 100, C_GREEN);
-}
+#define ARRAY_SIZE(arr) ((sizeof(arr) / sizeof(arr[0])))
 
 /* Calculate the grid size */
 #define MAX_COLS (LCD_HOR_RES / 8)
@@ -332,6 +314,132 @@ static void ugui_test_matrix(bool loop)
 	}
 }
 
+static void ugui_test_shapes(bool loop)
+{
+	UG_FillScreen(C_BLACK);
+
+	// Draw a circle
+	UG_DrawCircle(120, 160, 50, C_CYAN);
+
+	// Draw a filled circle
+	UG_FillCircle(320, 160, 40, C_MAGENTA);
+
+	// Draw an ellipse
+	// UG_DrawEllipse(120, 80, 30, 20, C_YELLOW);
+
+	// Draw a filled ellipse
+	// UG_FillEllipse(320, 80, 25, 30, C_GREEN);
+
+	// Draw a rectangle with rounded corners
+	UG_DrawRoundFrame(20, 20, 100, 100, 10, C_RED);
+
+	// Draw a filled rectangle with rounded corners
+	UG_FillRoundFrame(220, 20, 300, 100, 15, C_BLUE);
+
+	sleep_ms(2000);
+}
+
+static void ugui_test_progress(bool loop)
+{
+	UG_FillScreen(C_BLACK);
+
+	// Draw a progress bar
+	UG_DrawFrame(50, 50, 400, 70, C_WHITE);
+	UG_FillFrame(52, 52, 400, 68, C_GREEN);
+
+	// Draw a circular progress indicator
+	UG_DrawCircle(120, 240, 30, C_WHITE);
+	UG_FillCircle(120, 240, 25, C_BLUE);
+
+	// Simulate progress animation
+	for (int i = 0; i < 100; i += 5) {
+		int width = 348 * i / 100;
+		UG_FillFrame(52, 52, 52 + width, 68, C_GREEN);
+
+		// Update circular progress
+		if (i > 0) {
+			UG_DrawCircle(120, 240, 30 - i / 10, C_BLUE);
+		}
+		sleep_ms(100);
+	}
+
+	sleep_ms(1000);
+}
+
+#include <math.h>
+static void ugui_test_animated_shapes(bool loop)
+{
+	UG_FillScreen(C_BLACK);
+
+	for (int i = 0; i < 50; i++) {
+		// Clear screen with fading effect
+		UG_FillFrame(0, 0, LCD_HOR_RES - 1, LCD_VER_RES - 1, C_BLACK);
+
+		// Draw animated shapes
+		UG_DrawCircle(240 + 50 * sin(i * 0.3), 160 + 50 * cos(i * 0.3),
+			      20, C_RED);
+		UG_DrawFrame(100 + i * 4, 100, 180 + i * 4, 180, C_BLUE);
+		UG_DrawLine(0, i * 4, LCD_HOR_RES - 1, i * 4, C_GREEN);
+
+		sleep_ms(50);
+	}
+}
+
+static void ugui_test_colors(bool loop)
+{
+	// Display all basic colors
+	uint16_t colors[] = { C_BLACK,	C_WHITE,  C_RED,     C_GREEN,
+			      C_BLUE,	C_CYAN,	  C_MAGENTA, C_YELLOW,
+			      C_ORANGE, C_INDIGO, C_VIOLET,  C_LIME };
+	char *color_names[] = { "BLACK",  "WHITE",  "RED",     "GREEN",
+				"BLUE",	  "CYAN",   "MAGENTA", "YELLOW",
+				"ORANGE", "INDIGO", "VIOLET",  "LIME" };
+
+	for (int i = 0; i < ARRAY_SIZE(colors); i++) {
+		UG_FillScreen(colors[i]);
+		UG_FontSelect(&FONT_12X16);
+
+		UG_SetBackcolor(colors[i]);
+		if (colors[i] == C_WHITE)
+			UG_SetForecolor(C_BLACK);
+		else
+			UG_SetForecolor(C_WHITE);
+
+		UG_PutString(10, 10, color_names[i]);
+		sleep_ms(800);
+	}
+}
+
+static void ugui_test_animation(bool loop)
+{
+	UG_FillScreen(C_BLACK);
+
+	// Create a bouncing ball animation
+	int x = 100, y = 100;
+	int dx = 3, dy = 2;
+	int radius = 15;
+
+	for (int i = 0; i < 200; i++) {
+		// Clear previous position
+		UG_FillCircle(x, y, radius, C_BLACK);
+
+		// Update position
+		x += dx;
+		y += dy;
+
+		// Bounce off edges
+		if (x <= radius || x >= LCD_HOR_RES - radius)
+			dx = -dx;
+		if (y <= radius || y >= LCD_VER_RES - radius)
+			dy = -dy;
+
+		// Draw new position
+		UG_FillCircle(x, y, radius, C_WHITE);
+
+		sleep_ms(30);
+	}
+}
+
 UG_WINDOW window;
 UG_BUTTON button, button2;
 UG_TEXTBOX textbox;
@@ -385,11 +493,13 @@ static void ugui_test_window(bool loop)
 }
 
 static const struct ugui_test ugui_tests[] = {
-	DEFINE_UGUI_TEST(0, "color fill", ugui_test_color_fill, false),
-	DEFINE_UGUI_TEST(1, "draw", ugui_test_draw, false),
-	DEFINE_UGUI_TEST(2, "text", ugui_test_text, false),
-	DEFINE_UGUI_TEST(3, "matrix", ugui_test_matrix, false),
-	DEFINE_UGUI_TEST(4, "window", ugui_test_window, false),
+	DEFINE_UGUI_TEST(1, "text", ugui_test_text, false),
+	DEFINE_UGUI_TEST(2, "matrix", ugui_test_matrix, false),
+	DEFINE_UGUI_TEST(3, "animated shapes", ugui_test_animated_shapes,
+			 false),
+	DEFINE_UGUI_TEST(4, "colors", ugui_test_colors, false),
+	DEFINE_UGUI_TEST(5, "animation", ugui_test_animation, false),
+	DEFINE_UGUI_TEST(6, "window", ugui_test_window, false),
 	{ /* sentinel */ },
 };
 
