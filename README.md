@@ -1,34 +1,35 @@
-# Port uGUI for Pico_DM_QD3503728
+# Pico_DM_QD3503728 的 uGUI 移植版本
 
-## What is µGUI?
+[English](./README.en.md) | [中文](./README.md)
 
-µGUI is a free and open source graphic library for embedded systems. It is platform-independent and can be easily ported to almost any microcontroller system. As long as the display is capable of showing graphics, µGUI is not restricted to a certain display technology. Therefore, display technologies such as LCD, TFT, E-Paper, LED or OLED are supported. The whole module consists of three files: ugui.c, ugui.h and ugui_config.h.
+## 什么是 µGUI？
 
-### µGUI Features
+µGUI 是一个适用于嵌入式系统的免费开源图形库。它与平台无关，可以轻松移植到几乎任何微控制器系统。只要显示屏能够显示图形，µGUI 就不受特定显示技术的限制。因此，它支持 LCD、TFT、电子墨水屏、LED 或 OLED 等多种显示技术。整个模块由三个文件组成：ugui.c、ugui.h 和 ugui_config.h。
 
-- µGUI supports any color, grayscale or monochrome display
-- µGUI supports any display resolution
-- µGUI supports multiple different displays
-- µGUI supports any touch screen technology (e.g. AR, PCAP)
-- µGUI supports windows and objects (e.g. button, textbox)
-- µGUI supports platform-specific hardware acceleration
-- 16 different fonts available
-- cyrillic fonts supported
-- TrueType font converter available ([https://github.com/AriZuu](https://github.com/AriZuu))
-- integrated and free scalable system console
-- basic geometric functions (e.g. line, circle, frame etc.)
-- can be easily ported to almost any microcontroller system
-- no risky dynamic memory allocation required
+### µGUI 特性
 
-### µGUI Requirements
+- µGUI 支持任何彩色、灰度或单色显示屏
+- µGUI 支持任何显示分辨率
+- µGUI 支持多个不同的显示屏
+- µGUI 支持任何触摸屏技术（例如电阻屏、电容屏）
+- µGUI 支持窗口和控件（例如按钮、文本框）
+- µGUI 支持特定平台的硬件加速
+- 提供 16 种不同的字体
+- 支持西里尔字体
+- 提供 TrueType 字体转换器（[https://github.com/AriZuu](https://github.com/AriZuu)）
+- 集成且可自由缩放的系统控制台
+- 基本几何绘图功能（例如直线、圆形、边框等）
+- 可以轻松移植到几乎任何微控制器系统
+- 无需使用有风险的动态内存分配
 
-µGUI is platform-independent, so there is no need to use a certain embedded system. In order to
-use µGUI, only two requirements are necessary:
+### µGUI 要求
 
-- a C-function which is able to control pixels of the target display.
-- integer types for the target platform have to be adjusted in ugui_config.h.
+µGUI 与平台无关，因此不需要使用特定的嵌入式系统。要使用 µGUI，只需满足两个要求：
 
-#### Memory Usage
+- 一个能够控制目标显示屏像素的 C 函数
+- 必须在 ugui_config.h 中调整目标平台的整数类型
+
+#### 内存使用情况
 
 ```text
 ❯ ninja && picotool load -fvx ./pico_dm_qd3503728_ugui.uf2
@@ -43,35 +44,35 @@ Memory region         Used Size  Region Size  %age Used
      48040      15356      18988      82384 pico_dm_qd3503728_ugui.elf
 ```
 
-## Getting started
+## 开始使用
 
-Build the firmware
+编译固件
 
 ```bash
 git clone https://github.com/embeddedboys/pico_dm_qd3503728_ugui.git
 cd pico_dm_qd3503728_ugui
 git submodule update --init
 
-# Build for pico2
+# 为 Pico 2 编译
 mkdir build && cd build
 cmake -DPICO_BOARD=pico2 .. -G Ninja
 ninja
 ```
 
-Load it to your device
+将固件烧录到设备
 
-1. Use picotool
+1. 使用 picotool
 
-With the latest picotool, you no longer need to press the BOOTSEL button and plug in the power to enter UF2 burning mode. Simply keep the USB cable connected and run the following command from the terminal, and the device will automatically perform this process.
+使用最新版本的 picotool，您不再需要按住 BOOTSEL 按钮再插电进入 UF2 烧录模式。只需保持 USB 线连接，在终端运行以下命令，设备会自动进入烧录模式。
 
 ```bash
-# connect the pico board to your computer first
+# 先将 Pico 开发板连接到电脑
 picotool load -fvx ./pico_dm_qd3503728_sgl.uf2
 ```
 
-2. Use .uf2 file
+2. 使用 .uf2 文件
 
-press the BOOTSEL button and plug in the power to enter UF2 burning mode.
+按住 BOOTSEL 按钮再插电进入 UF2 烧录模式。
 
 ```bash
 mkdir -p /tmp/pico
@@ -79,27 +80,27 @@ sudo mount /dev/sda1 /tmp/pico
 sudo cp pico_dm_qd3503728_sgl.uf2 /tmp/pico
 ```
 
-3. Use debugger
+3. 使用调试器
 
-Connect the debugger with pico.
-You need to install `openocd` first to run this command
+将调试器连接到 Pico。
+运行此命令前需要先安装 `openocd`
 
 ```bash
 ninja flash
 ```
 
-### Technical specifications
+### 技术规格
 
-| Part        | Model                       |
-| ----------- | --------------------------- |
-| Core Board  | Rasberrypi Pico             |
-| Display     | 3.5' 480x320 ILI9488 no IPS |
-|             | 16-bit 8080 50MHz           |
-| TouchScreen | 3.5' FT6236 capacity touch  |
+| 部件   | 型号                            |
+| ------ | ------------------------------- |
+| 核心板 | 树莓派 Pico                     |
+| 显示屏 | 3.5 英寸 480x320 ILI9488 非 IPS |
+|        | 16位 8080 接口 50MHz            |
+| 触摸屏 | 3.5 英寸 FT6236 电容触控        |
 
-### Pinout
+### 引脚定义
 
-| Left    | Right  |
+| 左侧    | 右侧   |
 | ------- | ------ |
 | GP0/DB0 | VBUS   |
 | GP1/DB1 | VSYS   |
@@ -107,14 +108,14 @@ ninja flash
 | GP2/DB2 | 3V3_EN |
 | ...     | ...    |
 
-GP0 ~ GP15 -> ILI9488 16 DB0-DB15 pins
-GP18 -> ILI9488 CS (Chip select)
-GP19 -> ILI9488 WR (write signal)
-GP20 -> ILI9488 RS (Register select, Active Low, 0: cmd, 1: data)
-GP22 -> ILI9488 Reset (Active Low)
-GP28 -> IlI9488 Backlight (Active High)
+GP0 ~ GP15 -> ILI9488 16位数据引脚 DB0-DB15
+GP18 -> ILI9488 CS（片选）
+GP19 -> ILI9488 WR（写信号）
+GP20 -> ILI9488 RS（寄存器选择，低电平有效，0：命令，1：数据）
+GP22 -> ILI9488 复位（低电平有效）
+GP28 -> ILI9488 背光（高电平有效）
 
-## Links
+## 链接
 
 - [https://github.com/achimdoebler/UGUI](https://github.com/achimdoebler/UGUI)
 - [https://github.com/embeddedboys/pico_dm_qd3503728_ugui](https://github.com/embeddedboys/pico_dm_qd3503728_ugui)
