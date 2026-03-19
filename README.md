@@ -2,6 +2,8 @@
 
 [English](./README.en.md) | [中文](./README.md)
 
+<img width="640" height="480" alt="pico_dm_qd3503728_ugui_0_compressed" src="https://github.com/user-attachments/assets/19cfb782-e382-43eb-b59c-635be076a112" />
+
 ## 什么是 µGUI？
 
 µGUI 是一个适用于嵌入式系统的免费开源图形库。它与平台无关，可以轻松移植到几乎任何微控制器系统。只要显示屏能够显示图形，µGUI 就不受特定显示技术的限制。因此，它支持 LCD、TFT、电子墨水屏、LED 或 OLED 等多种显示技术。整个模块由三个文件组成：ugui.c、ugui.h 和 ugui_config.h。
@@ -89,6 +91,12 @@ sudo cp pico_dm_qd3503728_sgl.uf2 /tmp/pico
 ninja flash
 ```
 
+4. 运行测试
+
+The default test suite includes text, drawing, window, and additionally a matrix example. All test cases are written by AI.
+
+<img width="640" height="480" alt="pico_dm_qd3503728_ugui_1" src="https://github.com/user-attachments/assets/6dafe73f-874d-4087-ab54-32bdc2b7a362" />
+
 ### 技术规格
 
 | 部件   | 型号                            |
@@ -108,14 +116,32 @@ ninja flash
 | GP2/DB2 | 3V3_EN |
 | ...     | ...    |
 
-- GP0 ~ GP15 -> ILI9488 16位数据引脚 DB0-DB15
-- GP18 -> ILI9488 CS（片选）
-- GP19 -> ILI9488 WR（写信号）
-- GP20 -> ILI9488 RS（寄存器选择，低电平有效，0：命令，1：数据）
-- GP22 -> ILI9488 复位（低电平有效）
-- GP28 -> ILI9488 背光（高电平有效）
+#### ILI9488 Display pins
+
+- GP0 ~ GP15 -> ILI9488 DB0-DB15 16 pins
+
+- GP18 -> ILI9488 CS (Chip select)
+
+- GP19 -> ILI9488 WR (write signal)
+
+- GP20 -> ILI9488 RS (Register select, Active Low, 0: cmd, 1: data)
+
+- GP22 -> ILI9488 Reset (Active Low)
+
+- GP28 -> IlI9488 Backlight (Active High)
+
+#### FT6236 Touch pins
+
+- GP18 -> FT6236 Reset (Active Low)
+  
+- GP21 -> FT6236 IRQ (Active Low, 100Hz sample rate)
+  
+- GP26 -> FT6236 SDA (I2C1_SDA)
+  
+- GP27 -> FT6236 SCL (I2C1_SCL)
 
 ## 链接
 
+- [Pico DM QD3503728 - A modern GUI test & evaluation board for Raspberry Pi Pico](https://embeddedboys.github.io/Pico_DM_QD3503728/)
 - [https://github.com/achimdoebler/UGUI](https://github.com/achimdoebler/UGUI)
 - [https://github.com/embeddedboys/pico_dm_qd3503728_ugui](https://github.com/embeddedboys/pico_dm_qd3503728_ugui)
